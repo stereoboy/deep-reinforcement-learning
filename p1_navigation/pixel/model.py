@@ -1,15 +1,16 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 class QNetwork(nn.Module):
     """Actor (Policy) Model."""
 
-    def __init__(self, state_size, action_size, seed, fc1_units=64, fc2_units=64):
+    def __init__(self, input_shape, action_size, seed):
         """Initialize parameters and build model.
         Params
         ======
-            state_size (int): Dimension of each state
+            input_shape (int): Dimension of each state
             action_size (int): Dimension of each action
             seed (int): Random seed
             fc1_units (int): Number of nodes in first hidden layer
@@ -17,12 +18,32 @@ class QNetwork(nn.Module):
         """
         super(QNetwork, self).__init__()
         self.seed = torch.manual_seed(seed)
-        self.fc1 = nn.Linear(state_size, fc1_units)
-        self.fc2 = nn.Linear(fc1_units, fc2_units)
-        self.fc3 = nn.Linear(fc2_units, action_size)
+
+        self.conv = nn.Sequential(
+                nn.Conv2d(input_shape[0], 16, kernel_size=8, stride=4),
+                nn.ReLU(),
+                nn.Conv2d(16, 32, kernel_size=4, stride=2),
+                nn.ReLU(),
+                nn.Conv2d(32, 32, kernel_size=3, stride=1),
+                nn.ReLU()
+                )
+
+        conv_out_size = int(np.prod(self.conv(torch.zeros(1, *input_shape)).size()))
+
+        self.fc = nn.Sequential(
+                nn.Linear(conv_out_size, 512),
+                nn.ReLU(),
+                nn.Linear(512, action_size)
+                )
 
     def forward(self, state):
         """Build a network that maps state -> action values."""
-        x = F.relu(self.fc1(state))
-        x = F.relu(self.fc2(x))
-        return self.fc3(x)
+        batch_size = state.size()[0]
+        #fx = state.float()/256
+        fx = state.float() - 0.5
+#        print("===================================")
+#        print(fx.shape)
+        conv_out = self.conv(fx)
+#        print(conv_out.shape)
+        conv_out = self.conv(fx).view(batch_size, -1)
+        return self.fc(conv_out)
