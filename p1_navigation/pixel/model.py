@@ -17,14 +17,14 @@ class QNetwork(nn.Module):
             fc2_units (int): Number of nodes in second hidden layer
         """
         super(QNetwork, self).__init__()
-        self.seed = torch.manual_seed(seed)
+        #self.seed = torch.manual_seed(seed)
 
         self.conv = nn.Sequential(
-                nn.Conv2d(input_shape[0], 16, kernel_size=8, stride=4),
+                nn.Conv2d(input_shape[0], 32, kernel_size=8, stride=4),
                 nn.ReLU(),
-                nn.Conv2d(16, 32, kernel_size=4, stride=2),
+                nn.Conv2d(32, 64, kernel_size=4, stride=2),
                 nn.ReLU(),
-                nn.Conv2d(32, 32, kernel_size=3, stride=1),
+                nn.Conv2d(64, 64, kernel_size=3, stride=1),
                 nn.ReLU()
                 )
 
@@ -39,8 +39,8 @@ class QNetwork(nn.Module):
     def forward(self, state):
         """Build a network that maps state -> action values."""
         batch_size = state.size()[0]
-        #fx = state.float()/256
-        fx = state.float() - 0.5
+        fx = state.float()/256 - 0.5
+        #fx = state - 0.5
 #        print("===================================")
 #        print(fx.shape)
         conv_out = self.conv(fx)
