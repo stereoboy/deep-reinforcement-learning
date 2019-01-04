@@ -7,6 +7,11 @@ import matplotlib.pyplot as plt
 import time
 import gc
 import cv2
+import logging
+import sys
+
+logger = logging.getLogger("unityagents")
+logger.propagate = False
 
 env = UnityEnvironment(file_name="../VisualBanana_Linux/Banana.x86_64")
 
@@ -46,20 +51,24 @@ print('States look like:', state.shape) # -> (1, 84, 84)
 #plt.imshow(np.squeeze(state), cmap='gray')
 #plt.show()
 
+env.close()
+
 def preprocess(state):
     state = np.dot(state, np.array([0.299, 0.587, 0.114]))
     state *= 256
     return state.astype(np.uint8)
     #return np.transpose(state, (2, 0, 1))
 
-FRAME_SIZE = 4 
+FRAME_SIZE = 4
+
+SIM_RESET_INTERVAL = 500
 from dqn_agent import Agent
 from double_dqn_agent import DDQNAgent
 
 #agent = Agent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
 agent = DDQNAgent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
 
-def dqn(n_episodes=2000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.995):
+def dqn(n_episodes=20000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.995):
     """Deep Q-Learning.
     
     Params
@@ -78,7 +87,9 @@ def dqn(n_episodes=2000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.99
     start = time.time()
     
     for i_episode in range(1, n_episodes+1):
-        #state = env.reset()
+        if i_episode % SIM_RESET_INTERVAL == 1:
+            env = UnityEnvironment(file_name="../VisualBanana_Linux/Banana.x86_64")
+
         env_info = env.reset(train_mode=True)[brain_name]
         obs = env_info.visual_observations[0]
         obs = np.squeeze(obs)
@@ -123,12 +134,15 @@ def dqn(n_episodes=2000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.99
         current = time.time()
         elapsed = current - start
         elapsed_str = time.strftime("%H:%M:%S", time.gmtime(elapsed))
-        print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory)), end="")
+        print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory)), end="", file=sys.stderr)
         if i_episode % 100 == 0:
-            print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory)))
+            print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory)), file=sys.stderr)
         if np.mean(scores_window)>=20.0:
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode-100, np.mean(scores_window)))
             break
+
+        if i_episode % SIM_RESET_INTERVAL == 0:
+            env.close()
     torch.save(agent.qnetwork_local.state_dict(), './checkpoint.pth')
     return scores
 

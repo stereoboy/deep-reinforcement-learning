@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.NOTSET)
 logger = logging.getLogger("unityagents")
 #logger.setLevel(logging.NOTSET)
 logger.propagate = False
-env = UnityEnvironment(file_name="../VisualBanana_Windows_x86_64/Banana.exe")
+env = UnityEnvironment(file_name="../VisualBanana_Linux/Banana.x86_64")
 
 # get the default brain
 brain_name = env.brain_names[0]
@@ -27,30 +27,30 @@ def dqn(n_episodes=1000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.99
     for i_episode in range(1, n_episodes+1):
         #state = env.reset()
         if i_episode % 100 == 1:
-            env = UnityEnvironment(file_name="../VisualBanana_Windows_x86_64/Banana.exe")    
+            env = UnityEnvironment(file_name="../VisualBanana_Linux/Banana.x86_64")
         env_info = env.reset(train_mode=True)[brain_name]
         state = env_info.visual_observations[0]
         score = 0
         while True:
-            action = random.choice(np.arange(action_size)) 
+            action = random.choice(np.arange(action_size))
             env_info = env.step(action)[brain_name]        # send the action to the environment
             next_state = env_info.visual_observations[0]   # get the next state
             reward = env_info.rewards[0]                   # get the reward
-            done = env_info.local_done[0] 
-    
+            done = env_info.local_done[0]
+
             score += reward
             if done:
-                break 
+                break
         scores_window.append(score)       # save most recent score
         scores.append(score)              # save most recent score
-        
+
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)), end="")
         if i_episode % 100 == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_window)))
         if np.mean(scores_window)>=20.0:
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode-100, np.mean(scores_window)))
             break
-        if i_episode % 100 == 0:    
+        if i_episode % 100 == 0:
             env.close()
     return scores
 
