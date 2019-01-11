@@ -149,7 +149,7 @@ def dqn(n_episodes=int(5e4), max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=
 
         if i_episode % SIM_RESET_INTERVAL == 0:
             env.close()
-    torch.save(agent.qnetwork_local.state_dict(), './checkpoint.pth')
+    torch.save(agent.qnetwork_local.state_dict(), './checkpoint' + agent.__class__.__name__ + '.pth')
     return scores
 
 dqn_scores = dqn()
@@ -161,7 +161,7 @@ plt.plot(np.arange(len(dqn_scores)), dqn_scores)
 plt.ylabel('Score')
 plt.xlabel('Episode #')
 time_str = time.strftime("%Y-%m-%d_%I-%M-%S%p")
-filename = 'learning_graph_' + time_str + '.png'
+filename = 'learning_graph_' + agent.__class__.__name__ + time_str + '.png'
 print('\nsave learning graph on {}.'.format(filename), file=sys.stderr)
 plt.savefig(filename)
 #plt.show()
