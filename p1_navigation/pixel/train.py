@@ -60,7 +60,7 @@ def preprocess(state):
     #return np.transpose(state, (2, 0, 1))
 
 FRAME_SIZE = 4
-
+print("FRAME_SIZE:{}".format(FRAME_SIZE), file=sys.stderr)
 SIM_RESET_INTERVAL = 500
 from dqn_agent import Agent
 from double_dqn_agent import DDQNAgent
@@ -68,7 +68,7 @@ from double_dqn_agent import DDQNAgent
 #agent = Agent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
 agent = DDQNAgent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
 
-def dqn(n_episodes=20000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.995):
+def dqn(n_episodes=int(5e4), max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.999):
     """Deep Q-Learning.
     
     Params
@@ -126,18 +126,20 @@ def dqn(n_episodes=20000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.9
             score += reward
             #time.sleep(0.2)
             if done:
+                obs_queue.clear()
                 break 
         scores_window.append(score)       # save most recent score
         scores.append(score)              # save most recent score
-        eps = max(eps_end, eps_decay*eps) # decrease epsilon
+        if agent.l_step > 0:
+            eps = max(eps_end, eps_decay*eps) # decrease epsilon
         
         current = time.time()
         elapsed = current - start
         elapsed_str = time.strftime("%H:%M:%S", time.gmtime(elapsed))
-        print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory)), end="", file=sys.stderr)
+        print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory), eps), end="", file=sys.stderr)
         if i_episode % 100 == 0:
-            print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory)), file=sys.stderr)
-        if np.mean(scores_window)>=20.0:
+            print('\rEpisode {}\tAverage Score: {:.2f}\t{}\t{}\t{}\t{}\t{}'.format(i_episode, np.mean(scores_window), elapsed_str, action, agent.l_step, len(agent.memory), eps), file=sys.stderr)
+        if np.mean(scores_window)>=14.0:
             print('\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}'.format(i_episode-100, np.mean(scores_window)))
             break
 
@@ -149,10 +151,14 @@ def dqn(n_episodes=20000, max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.9
 dqn_scores = dqn()
 
 ## plot the scores
-#fig = plt.figure()
-#ax = fig.add_subplot(111)
-#plt.plot(np.arange(len(dqn_scores)), dqn_scores)
-#plt.ylabel('Score')
-#plt.xlabel('Episode #')
+fig = plt.figure()
+ax = fig.add_subplot(111)
+plt.plot(np.arange(len(dqn_scores)), dqn_scores)
+plt.ylabel('Score')
+plt.xlabel('Episode #')
+time_str = time.strftime("%Y-%m-%d_%I-%M-%S%p")
+filename = 'learning_graph_' + time_str + '.png'
+print('\nsave learning graph on {}.'.format(filename), file=sys.stderr)
+plt.savefig(filename)
 #plt.show()
 #
