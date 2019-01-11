@@ -70,7 +70,7 @@ from duel_double_dqn_agent import DuelDDQNAgent
 #agent = Agent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
 #agent = DDQNAgent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
 agent = DuelDDQNAgent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
-print("Agent's Name:{}".format(agent.__class__.__name__))
+print("Agent's Name:{}".format(agent.__class__.__name__), file=sys.stderr)
 
 def dqn(n_episodes=int(5e4), max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.999):
     """Deep Q-Learning.

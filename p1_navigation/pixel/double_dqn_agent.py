@@ -18,7 +18,7 @@ START_SIZE = 5e4
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-class DDQNAgent():
+class DDQNAgent(object):
     """Interacts with and learns from the environment."""
 
     def __init__(self, state_size, action_size, seed):
