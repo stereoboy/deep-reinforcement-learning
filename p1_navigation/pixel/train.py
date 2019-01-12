@@ -72,6 +72,8 @@ from duel_double_dqn_agent import DuelDDQNAgent
 agent = DuelDDQNAgent(state_size=(FRAME_SIZE, state.shape[1], state.shape[2]), action_size=action_size, seed=0)
 print("Agent's Name:{}".format(agent.__class__.__name__), file=sys.stderr)
 
+basename = ''
+
 def dqn(n_episodes=int(5e4), max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=0.999):
     """Deep Q-Learning.
     
@@ -149,7 +151,9 @@ def dqn(n_episodes=int(5e4), max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=
 
         if i_episode % SIM_RESET_INTERVAL == 0:
             env.close()
-    torch.save(agent.qnetwork_local.state_dict(), './checkpoint' + agent.__class__.__name__ + '.pth')
+    time_str = time.strftime("%Y-%m-%d_%I-%M-%S%p")
+    basename = agent.__class__.__name__ + time_str
+    torch.save(agent.qnetwork_local.state_dict(), './checkpoint_' + basename + '.pth')
     return scores
 
 dqn_scores = dqn()
@@ -160,9 +164,8 @@ ax = fig.add_subplot(111)
 plt.plot(np.arange(len(dqn_scores)), dqn_scores)
 plt.ylabel('Score')
 plt.xlabel('Episode #')
-time_str = time.strftime("%Y-%m-%d_%I-%M-%S%p")
-filename = 'learning_graph_' + agent.__class__.__name__ + time_str + '.png'
-print('\nsave learning graph on {}.'.format(filename), file=sys.stderr)
-plt.savefig(filename)
+print('\nsave learning graph on {}.'.format(basename), file=sys.stderr)
+plt.savefig('learning_graph_' + basename + '.png')
+np.save('learning_graph_' + basename + '.npy', dqn_scores)
 #plt.show()
 #
