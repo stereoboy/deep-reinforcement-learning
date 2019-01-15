@@ -152,6 +152,7 @@ def dqn(n_episodes=int(5e4), max_t=1000, eps_start=1.0, eps_end=0.01, eps_decay=
         if i_episode % SIM_RESET_INTERVAL == 0:
             env.close()
     time_str = time.strftime("%Y-%m-%d_%I-%M-%S%p")
+    global basename
     basename = agent.__class__.__name__ + time_str
     torch.save(agent.qnetwork_local.state_dict(), './checkpoint_' + basename + '.pth')
     return scores
