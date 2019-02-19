@@ -1,14 +1,10 @@
 [//]: # (Image References)
 
-[image1]: https://user-images.githubusercontent.com/10624937/42135619-d90f2f28-7d12-11e8-8823-82b970a54d7e.gif "Trained Agent"
-
 # Project 1: Navigation
 
 ### Introduction
 
 For this project, you will train an agent to navigate (and collect bananas!) in a large, square world.  
-
-![Trained Agent][image1]
 
 A reward of +1 is provided for collecting a yellow banana, and a reward of -1 is provided for collecting a blue banana.  Thus, the goal of your agent is to collect as many yellow bananas as possible while avoiding blue bananas.  
 
@@ -36,7 +32,38 @@ The task is episodic, and in order to solve the environment, your agent must get
 
 ### Instructions
 
-Follow the instructions in `Navigation.ipynb` to get started with training your own agent!  
+Follow the instructions in `Navigation.ipynb` to get started with training your own agent!
+
+### My Solution
+
+* **See all code in `Solution.ipynb`.**
+
+* **See writeup.pdf for Documentation.**
+
+* agent codes
+```
+├── dqn_agent.py                      // Vanilla DQN
+├── double_dqn_agent.py               // Double DQN
+├── duel_double_dqn_agent.py          // Duel + Double DQN
+├── noisy_duel_double_dqn_agent.py    // Noisy + Duel + Double DQN
+```
+* network codes
+```
+├── model.py                          // DQN Network
+├── duel_model.py                     // Duel Network, Noisy Network
+```
+* stored checkpoints
+```
+├── checkpoint.pth                    // DQN
+├── checkpoint_doubledqn.pth          // Double DQN
+├── checkpoint_dueldoubledqn.pth      // Duel + Double DQN
+├── checkpoint_noisydueldoubledqn.pth // Noisy + Duel + Double DQN
+```
+
+### Result Video
+
+**CLICK the image for my YOUTUBE VIDEO**
+[![alt text](https://img.youtube.com/vi/dQ2gZnqkyUo/0.jpg)](https://youtu.be/dQ2gZnqkyUo)
 
 ### (Optional) Challenge: Learning from Pixels
 
