@@ -10,11 +10,11 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 128        # minibatch size
+BATCH_SIZE = 64         # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
 LR_ACTOR = 1e-4         # learning rate of the actor 
-LR_CRITIC = 1e-3        # learning rate of the critic
+LR_CRITIC = 3e-4        # learning rate of the critic
 WEIGHT_DECAY = 0        # L2 weight decay
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -22,7 +22,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class Agent():
     """Interacts with and learns from the environment."""
     
-    def __init__(self, state_size, action_size, random_seed):
+    def __init__(self, num_agents, state_size, action_size, random_seed):
         """Initialize an Agent object.
         
         Params
@@ -31,6 +31,7 @@ class Agent():
             action_size (int): dimension of each action
             random_seed (int): random seed
         """
+        self.num_agents = num_agents
         self.state_size = state_size
         self.action_size = action_size
         self.seed = random.seed(random_seed)
@@ -46,7 +47,7 @@ class Agent():
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
 
         # Noise process
-        self.noise = OUNoise(action_size, random_seed)
+        self.noises = [OUNoise(action_size, random_seed) for _ in range(self.num_agents)]
 
         # Replay memory
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
@@ -56,6 +57,7 @@ class Agent():
         # Save experience / reward
         self.memory.add(state, action, reward, next_state, done)
 
+    def update(self):
         # Learn, if enough samples are available in memory
         if len(self.memory) > BATCH_SIZE:
             experiences = self.memory.sample()
@@ -69,11 +71,14 @@ class Agent():
             action = self.actor_local(state).cpu().data.numpy()
         self.actor_local.train()
         if add_noise:
-            action += self.noise.sample()
+            #action += self.noise.sample()
+            for i in range(self.num_agents):
+                action[i] += self.noises[i].sample()
         return np.clip(action, -1, 1)
 
     def reset(self):
-        self.noise.reset()
+        for i in range(self.num_agents):
+            self.noises[i].reset()
 
     def learn(self, experiences, gamma):
         """Update policy and value parameters using given batch of experience tuples.
@@ -101,6 +106,11 @@ class Agent():
         # Minimize the loss
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
+        # ---------------------------------------------------------------------- #
+        # 6. Benchmark Implementation Attempt 3
+        #
+        torch.nn.utils.clip_grad_norm_(self.critic_local.parameters(), 1)
+        # ---------------------------------------------------------------------- #
         self.critic_optimizer.step()
 
         # ---------------------------- update actor ---------------------------- #
@@ -110,6 +120,11 @@ class Agent():
         # Minimize the loss
         self.actor_optimizer.zero_grad()
         actor_loss.backward()
+        # ---------------------------------------------------------------------- #
+        # 6. Benchmark Implementation Attempt 3
+        #
+        torch.nn.utils.clip_grad_norm_(self.actor_local.parameters(), 0.5)
+        # ---------------------------------------------------------------------- #
         self.actor_optimizer.step()
 
         # ----------------------- update target networks ----------------------- #
@@ -132,7 +147,7 @@ class Agent():
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
 
-    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.2):
+    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.1):
         """Initialize parameters and noise process."""
         self.mu = mu * np.ones(size)
         self.theta = theta
