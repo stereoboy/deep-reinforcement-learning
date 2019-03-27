@@ -32,9 +32,10 @@ import torch
 from collections import deque
 import matplotlib.pyplot as plt
 
-from ddpg.ddpg_agent import Agent
+from ddpg.ddpg_agent import Agent, NoisyAgent
 
-agent = Agent(num_agents=num_agents, state_size=state_size, action_size=action_size, random_seed=2)
+#agent = Agent(num_agents=num_agents, state_size=state_size, action_size=action_size, random_seed=2)
+agent = NoisyAgent(num_agents=num_agents, state_size=state_size, action_size=action_size, random_seed=2)
 
 def ddpg(n_episodes=200):
     scores_deque = deque(maxlen=100)
