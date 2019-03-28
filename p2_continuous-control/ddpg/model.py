@@ -10,7 +10,7 @@ def hidden_init(layer):
     return (-lim, lim)
 
 class NoisyLinear(nn.Linear):
-    def __init__(self, in_features, out_features, bias=True, sigma=0.05): # 0.017 -> 0.07 for bigger noise
+    def __init__(self, in_features, out_features, bias=True, sigma=0.07): # 0.017 -> 0.07 for bigger noise
         super(NoisyLinear, self).__init__(in_features, out_features, bias=bias)
 #        self.in_features = in_features
 #        self.out_features = out_features
