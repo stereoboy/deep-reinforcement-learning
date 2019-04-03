@@ -66,6 +66,39 @@ The environment is considered solved, when the average (over 100 episodes) of th
 
 Follow the instructions in `Continuous_Control.ipynb` to get started with training your own agent!  
 
+### My Solution
+
+* **See all code in `Continuous_Control_Solution.ipynb`.**
+
+* **See Report.pdf for Documentation.**
+
+* agent codes
+
+```
+./ddpg
+  ├── dqn_agent.py                    // DDPG Agent
+```
+* network codes
+```
+./ddpg
+  ├── model.py                        // DDPG Actor/Critic Network + Noisy Network Implementation
+```
+* stored checkpoints
+```
+./ddpg
+  ├── checkpoint_actor.pth            // Actor Network Model of DDPG
+  ├── checkpoint_critic.pth           // Critic Network Model of DDPG
+
+  ├── checkpoint_noisy_actor.pth      // 'Noisy' Actor Network Model of DDPG
+  ├── checkpoint_noisy_critic.pth     // 'Noisy' Critic Network Model of DDPG
+```
+
+### Result Video
+
+**CLICK the image for my YOUTUBE VIDEO: [https://youtu.be/0Eu5wKmvrDU](https://youtu.be/0Eu5wKmvrDU)**
+
+[![alt text](https://img.youtube.com/vi/0Eu5wKmvrDU/0.jpg)](https://youtu.be/0Eu5wKmvrDU)
+
 ### (Optional) Challenge: Crawler Environment
 
 After you have successfully completed the project, you might like to solve the more difficult **Crawler** environment.
