@@ -62,7 +62,8 @@ Follow the instructions in `Navigation.ipynb` to get started with training your 
 
 ### Result Video
 
-**CLICK the image for my YOUTUBE VIDEO**
+**CLICK the image for my YOUTUBE VIDEO: [https://youtu.be/dQ2gZnqkyUo](https://youtu.be/dQ2gZnqkyUo)**
+
 [![alt text](https://img.youtube.com/vi/dQ2gZnqkyUo/0.jpg)](https://youtu.be/dQ2gZnqkyUo)
 
 ### (Optional) Challenge: Learning from Pixels
