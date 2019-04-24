@@ -10,7 +10,6 @@
 
 For this project, you will work with the [Tennis](https://github.com/Unity-Technologies/ml-agents/blob/master/docs/Learning-Environment-Examples.md#tennis) environment.
 
-![Trained Agent][image1]
 
 In this environment, two agents control rackets to bounce a ball over a net. If an agent hits the ball over the net, it receives a reward of +0.1.  If an agent lets a ball hit the ground or hits the ball out of bounds, it receives a reward of -0.01.  Thus, the goal of each agent is to keep the ball in play.
 
@@ -40,6 +39,36 @@ The environment is considered solved, when the average (over 100 episodes) of th
 ### Instructions
 
 Follow the instructions in `Tennis.ipynb` to get started with training your own agent!  
+
+### My Solution
+
+* **See all code in `Tennis_Solution.ipynb`.**
+
+* **See Report.pdf for Documentation.**
+
+* agent codes
+
+```
+./ddpg
+  ├── dqn_agent.py                    // DDPG Agent
+```
+* network codes
+```
+./ddpg
+  ├── model.py                        // DDPG Actor/Critic Network + Noisy Network Implementation
+```
+* stored checkpoints
+```
+./ddpg
+  ├── checkpoint_noisy_actor.pth      // 'Noisy' Actor Network Model of DDPG
+  ├── checkpoint_noisy_critic.pth     // 'Noisy' Critic Network Model of DDPG
+```
+
+### Result Video
+
+**CLICK the image for my YOUTUBE VIDEO: [https://youtu.be/7fEVTMmuOdA](https://youtu.be/7fEVTMmuOdA)**
+
+[![alt text](https://img.youtube.com/vi/7fEVTMmuOdA/0.jpg)](https://youtu.be/7fEVTMmuOdA)
 
 ### (Optional) Challenge: Crawler Environment
 
